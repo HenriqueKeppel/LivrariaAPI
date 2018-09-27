@@ -9,6 +9,7 @@ namespace LivrariaAPI.Models
         public string Titulo { get;set;  }
         public EditoraModel Editora { get;set;  }
         public DateTime AnoLancamento { get;set; }
+        public Decimal Valor { get; set; }
 
         public List<AutorModel> ListaAutores { get;set; }
 

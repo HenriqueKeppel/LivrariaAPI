@@ -3,57 +3,154 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using LivrariaAPI.Models;
+using LivrariaAPI.DTOModels;
 
 namespace LivrariaAPI.Controllers
 {
     [Route("LivrariaAPI/v1/[controller]")]
     public class PedidosController : Controller
     {
+        #region Carrinho
+
+        private CarrinhoModel carrinho {get;set;}
+
+        [HttpPut("/Carrinho")]
+        public bool Put(LivroModel item)
+        {
+            if (carrinho == null)
+            {
+                carrinho = new CarrinhoModel();
+            }
+            carrinho.AddItem(item);
+            
+            return true;
+        }
+
+/*        [HttpGet("/Carrinho/{idCarrinho}")]
+        public CarrinhoModel GetCarrinho(int idCarrinho)
+        {
+            return carrinho;
+        }*/
+        [HttpGet("/Carrinho/{idCarrinho}")]
+        public string GetCarrinho(int idCarrinho)
+        {
+            return "teste";
+        }
+
+        #endregion
+
+        [HttpPut("/ConfirmarPedido/Carrinho/{idCarrinho}")]
+        public ConfirmarPedidoResponse ConfirmarPedido(int idCarrinho)
+        {
+            ConfirmarPedidoResponse result = new ConfirmarPedidoResponse();
+
+            // Pedido Gravado na base de dados
+            result.Pedido = carrinho.ConfirmarPedido();
+            
+            if (result.Pedido != null)
+                result.StatusCode = 200;
+            else
+                result.StatusCode = 204;
+
+            return result;
+        }
+
         // GET api/values
         [HttpGet]
         [ProducesResponseType(200)]
-        public IEnumerable<string> Get([FromQuery]string nome, int sobrenome)
+        public PedidosGet Get([FromQuery]DateTime dataPedido, int status)
         {
-            return new string[] { "idAutor: 1, nome: titulo1, sobreNome: 1" };
+            PedidosGet result = new PedidosGet();
+
+            if (dataPedido.ToString("yyyy-ii-dd") == "2018-09-26")
+            {
+                PedidoModel pedido = new PedidoModel();
+
+                EditoraModel editoraMock = new EditoraModel()
+                {
+                    IdEditora = 1,
+                    Nome = "Abril"
+                };
+
+                AutorModel autorMock = new AutorModel()
+                {
+                    IdAutor = 1,
+                    Nome = "Homero",
+                    SobreNome = string.Empty
+                };
+
+                LivroModel livroMock = new LivroModel()
+                {
+                    Isbn = 654321,
+                    Editora = editoraMock,
+                    AnoLancamento = DateTime.Now,
+                    Titulo = "Odisseia"
+                };
+                livroMock.ListaAutores.Add(autorMock);
+
+                pedido.AddItemPedido(livroMock);
+                result.Pedidos.Add(pedido);
+                result.StatusCode = 200;
+            }
+            else
+                result.StatusCode = 204;
+            return result;
         }
 
         // GET api/values/5
-        [HttpGet("{idAutor}")]
-        [ProducesResponseType(200)]
-        public string Get(int idAutor)
+        [HttpGet("{idPedido}")]
+        public PedidosGet Get(int idPedido)
         {
-            return "idAutor: 1, nome: titulo1, sobreNome: 1";
+            PedidosGet result = new PedidosGet();
+
+            if (idPedido == 1)
+            {
+                PedidoModel pedido = new PedidoModel();                
+
+                EditoraModel editoraMock = new EditoraModel()
+                {
+                    IdEditora = 1,
+                    Nome = "Abril"
+                };
+
+                AutorModel autorMock = new AutorModel()
+                {
+                    IdAutor = 1,
+                    Nome = "Homero",
+                    SobreNome = string.Empty
+                };
+
+                LivroModel livroMock = new LivroModel()
+                {
+                    Isbn = 654321,
+                    Editora = editoraMock,
+                    AnoLancamento = DateTime.Now,
+                    Titulo = "Odisseia",
+                    Valor = 49                    
+                };
+                livroMock.ListaAutores.Add(autorMock);
+                
+                pedido.AddItemPedido(livroMock);
+                result.Pedidos.Add(pedido);
+                result.StatusCode = 200;
+            }
+            else
+                result.StatusCode = 204;
+            return result;
         }
 
-        // GET api/values/5
-        [HttpGet("{idAutor}/Livros")]
-        [ProducesResponseType(200)]
-        public IEnumerable<string> GetLivros(int idAutor)
+        [HttpPut("/cancelar/{idPedido}")]
+        public ResponseGet CancelarPedido(int idPedido)
         {
-            return new string[] { "Isbn: 1, Titulo: api, IdEditora: 1, [ { idAutor: 1, Nome: nomeAutor, Sobrenome: sobrenomeAutor } ]" };
-            // TODO: devolver uri de detalhes dos autores
-        }
+            ResponseGet result = new ResponseGet();
 
-        // POST api/values
-        [HttpPost]
-        [ProducesResponseType(202)]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{idAutor}")]
-        [ProducesResponseType(202)]
-        public string Put(int idAutor, [FromBody]string value)
-        {
-            return "idAutor: 1, nome: teste, sobreNome: 4";
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{idAutor}")]
-        [ProducesResponseType(200)]
-        public void Delete(int idAutor)
-        {
+            // Obter pedido para cancelamento
+            if (idPedido == 1)
+                result.StatusCode = 200;
+            else
+                result.StatusCode = 204;
+            return result;
         }
     }
 }
