@@ -5,53 +5,27 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LivrariaAPI.Models;
 using LivrariaAPI.DTOModels;
+using LivrariaAPI.TypeValues;
 
 namespace LivrariaAPI.Controllers
 {
     [Route("LivrariaAPI/v1/[controller]")]
     public class PedidosController : Controller
     {
-        #region Carrinho
-
-        private CarrinhoModel carrinho {get;set;}
-
-        [HttpPut("/Carrinho")]
-        public bool Put(LivroModel item)
-        {
-            if (carrinho == null)
-            {
-                carrinho = new CarrinhoModel();
-            }
-            carrinho.AddItem(item);
-            
-            return true;
-        }
-
-/*        [HttpGet("/Carrinho/{idCarrinho}")]
-        public CarrinhoModel GetCarrinho(int idCarrinho)
-        {
-            return carrinho;
-        }*/
-        [HttpGet("/Carrinho/{idCarrinho}")]
-        public string GetCarrinho(int idCarrinho)
-        {
-            return "teste";
-        }
-
-        #endregion
-
-        [HttpPut("/ConfirmarPedido/Carrinho/{idCarrinho}")]
-        public ConfirmarPedidoResponse ConfirmarPedido(int idCarrinho)
+        [HttpPost("confirmar")]
+        public ConfirmarPedidoResponse ConfirmarPedido([FromBody]CarrinhoModel carrinho)
         {
             ConfirmarPedidoResponse result = new ConfirmarPedidoResponse();
-
-            // Pedido Gravado na base de dados
-            result.Pedido = carrinho.ConfirmarPedido();
+            PedidoModel pedido = new PedidoModel();
             
-            if (result.Pedido != null)
-                result.StatusCode = 200;
-            else
-                result.StatusCode = 204;
+            // Adiciona itens do carrinho no pedido
+            pedido.AddRangeItemPedido(carrinho.Itens);
+
+            pedido.DataPedido = DateTime.Now;
+            pedido.Status = StatusPedido.Confirmado;
+
+            result.StatusCode = 200;
+            result.Pedido = pedido;
 
             return result;
         }
@@ -67,29 +41,14 @@ namespace LivrariaAPI.Controllers
             {
                 PedidoModel pedido = new PedidoModel();
 
-                EditoraModel editoraMock = new EditoraModel()
+                PedidoItem item = new PedidoItem() 
                 {
-                    IdEditora = 1,
-                    Nome = "Abril"
-                };
-
-                AutorModel autorMock = new AutorModel()
-                {
-                    IdAutor = 1,
-                    Nome = "Homero",
-                    SobreNome = string.Empty
-                };
-
-                LivroModel livroMock = new LivroModel()
-                {
-                    Isbn = 654321,
-                    Editora = editoraMock,
-                    AnoLancamento = DateTime.Now,
+                    Isbn = 123456,
+                    Valor = 59,
                     Titulo = "Odisseia"
                 };
-                livroMock.ListaAutores.Add(autorMock);
 
-                pedido.AddItemPedido(livroMock);
+                pedido.AddItemPedido(item);
                 result.Pedidos.Add(pedido);
                 result.StatusCode = 200;
             }
@@ -108,30 +67,14 @@ namespace LivrariaAPI.Controllers
             {
                 PedidoModel pedido = new PedidoModel();                
 
-                EditoraModel editoraMock = new EditoraModel()
+                PedidoItem item = new PedidoItem() 
                 {
-                    IdEditora = 1,
-                    Nome = "Abril"
+                    Isbn = 123456,
+                    Valor = 59,
+                    Titulo = "Odisseia"
                 };
-
-                AutorModel autorMock = new AutorModel()
-                {
-                    IdAutor = 1,
-                    Nome = "Homero",
-                    SobreNome = string.Empty
-                };
-
-                LivroModel livroMock = new LivroModel()
-                {
-                    Isbn = 654321,
-                    Editora = editoraMock,
-                    AnoLancamento = DateTime.Now,
-                    Titulo = "Odisseia",
-                    Valor = 49                    
-                };
-                livroMock.ListaAutores.Add(autorMock);
                 
-                pedido.AddItemPedido(livroMock);
+                pedido.AddItemPedido(item);
                 result.Pedidos.Add(pedido);
                 result.StatusCode = 200;
             }
@@ -140,7 +83,7 @@ namespace LivrariaAPI.Controllers
             return result;
         }
 
-        [HttpPut("/cancelar/{idPedido}")]
+        [HttpPut("{idPedido}/Cancelar")]
         public ResponseGet CancelarPedido(int idPedido)
         {
             ResponseGet result = new ResponseGet();

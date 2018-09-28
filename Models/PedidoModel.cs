@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LivrariaAPI.TypeValues;
+using System.Linq;
 
 namespace LivrariaAPI.Models
 {   
@@ -8,7 +9,7 @@ namespace LivrariaAPI.Models
     {
         public int NumeroPedido {get; set;}
         public Decimal ValorTotal {get; set;}
-        public List<LivroModel> ItensPedido {get; set;}
+        public List<PedidoItem> ItensPedido {get; set;}
         public StatusPedido Status {get;set;}
         public DateTime DataPedido  {get;set;}
 
@@ -16,24 +17,30 @@ namespace LivrariaAPI.Models
         {
             // TODO: gerar numero de pedido
             NumeroPedido = 1;
-            ItensPedido = new List<LivroModel>();
+            ItensPedido = new List<PedidoItem>();
         }
 
-        public void AddRangeItemPedido(List<LivroModel> itens)
+        public void AddRangeItemPedido(List<PedidoItem> itens)
         {
             ItensPedido = itens;
+            CalculaValorTotal();
         }
 
-        public void AddItemPedido(LivroModel item)
+        public void AddItemPedido(PedidoItem item)
         {
             ItensPedido.Add(item);
             ValorTotal += item.Valor;
         }
 
-        public void RemoveItemPedido(LivroModel item)
+        public void RemoveItemPedido(PedidoItem item)
         {
             ItensPedido.Remove(item);
             ValorTotal -= item.Valor;
+        }        
+
+        private void CalculaValorTotal()
+        {
+            ValorTotal = ItensPedido.Sum(o => o.Valor);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace LivrariaAPI.Models
         #region [ Propriedades ]
 
         public int IdCarrinho {get;set;}
-        public List<LivroModel> Itens {get;set;}
+        public List<PedidoItem> Itens {get;set;}
 
         #endregion
 
@@ -18,25 +18,22 @@ namespace LivrariaAPI.Models
         public CarrinhoModel()
         {
             IdCarrinho = 1;
+            Itens = new List<PedidoItem>();
         }
 
-        public void AddItem(LivroModel item)
+        public CarrinhoModel(int idCarrinho)
+        {
+            IdCarrinho = idCarrinho;
+            Itens = new List<PedidoItem>();
+        }
+
+        public void AddItem(PedidoItem item)
         {
             Itens.Add(item);
         }
 
         /// Cria um pedido e realiza a persistencia do mesmo na base de dados
-        public PedidoModel ConfirmarPedido()
-        {
-            PedidoModel pedido = new PedidoModel();
-            pedido.ValorTotal = Itens.Sum(o => o.Valor);
-
-            pedido.AddRangeItemPedido(Itens);
-            pedido.DataPedido = DateTime.Now;
-            pedido.Status = StatusPedido.Confirmado;
-
-            return pedido;
-        }
+        
         #endregion
     }
 }
