@@ -16,7 +16,7 @@ namespace LivrariaAPI.Controllers
             AuthenticateGet result = new AuthenticateGet();
             LoginModel login = null;
 
-            string tokenResult = ConsumirAdapter(email, pass);
+            string tokenResult = ConsumirApiAuthenticacao(email, pass);
 
             if (string.IsNullOrEmpty(tokenResult))
                 result.StatusCode = 204;
@@ -29,7 +29,7 @@ namespace LivrariaAPI.Controllers
             return result;
         }
 
-        private string ConsumirAdapter(string email, string pass)
+        private string ConsumirApiAuthenticacao(string email, string pass)
         {
             if (email == "keppel" && pass == "123456")
                 return Guid.NewGuid().ToString();

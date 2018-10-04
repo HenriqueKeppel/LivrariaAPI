@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LivrariaAPI.Models;
 using LivrariaAPI.DTOModels;
+using LivrariaAPI.Services;
 
 namespace LivrariaAPI.Controllers
 {
@@ -14,8 +15,11 @@ namespace LivrariaAPI.Controllers
         // GET api/values
         [HttpGet]
         [ProducesResponseType(200)]
-        public LivrosGet Get([FromQuery]int limit, int offset, string titulo, int idEditora, DateTime anoLancamento)
+        public async Task<LivrosGet> Get([FromQuery]int limit, int offset, string titulo, int idEditora, DateTime anoLancamento)
         {
+            // Loga que iniciou o processo de get
+            await LoggerService.RegistrarLog("Get: LivrariaAPI/v1/Livros");
+
             LivrosGet result = new LivrosGet(limit, offset);
 
             AutorModel autorMock = new AutorModel()
