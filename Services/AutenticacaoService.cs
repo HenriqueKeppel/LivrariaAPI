@@ -16,38 +16,6 @@ namespace LivrariaAPI.Services
         public static async Task<UsuarioModel> Autenticar(string email, string pass)
         {
             var uri = new Uri(string.Format("{0}/Autenticacao", urlBase));
-            HttpClient cliente = new HttpClient();
-            UsuarioModel usuarioAutenticado = null;
-
-            AutenticacaoRequestPost request = new AutenticacaoRequestPost
-            {
-                Email = email,
-                Pass = pass
-            };
-
-            var data = JsonConvert.SerializeObject(request);
-            var content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await cliente.PostAsync(uri, content);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var responseString = await response.Content.ReadAsStringAsync();
-                AutenticacaoResponsePost retorno = JsonConvert.DeserializeObject<AutenticacaoResponsePost>(responseString);
-                
-                usuarioAutenticado = new UsuarioModel
-                {
-                    IdUsuario = retorno.IdUsuario,
-                    Login = retorno.Login,
-                    Token = retorno.Token    
-                };
-            }
-            return usuarioAutenticado;
-        }
-
-        public static async Task<UsuarioModel> AutenticarV2(string email, string pass)
-        {
-            var uri = new Uri(string.Format("{0}/Autenticacao", urlBase));
             UsuarioModel usuarioAutenticado = null;
 
             using (var cliente = new HttpClient())
@@ -66,13 +34,13 @@ namespace LivrariaAPI.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
-                    AutenticacaoResponsePost retorno = JsonConvert.DeserializeObject<AutenticacaoResponsePost>(responseString);
+                    string retorno = JsonConvert.DeserializeObject<string>(responseString);
 
                     usuarioAutenticado = new UsuarioModel
                     {
-                        IdUsuario = retorno.IdUsuario,
-                        Login = retorno.Login,
-                        Token = retorno.Token    
+                        IdUsuario = 1,
+                        Login = email,
+                        Token = retorno
                     };
                 }
             }
