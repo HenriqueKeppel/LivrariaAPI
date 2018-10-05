@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using LivrariaAPI.Models;
 using LivrariaAPI.DTOModels;
 using LivrariaAPI.TypeValues;
+using LivrariaAPI.Services;
 
 namespace LivrariaAPI.Controllers
 {
@@ -13,20 +14,29 @@ namespace LivrariaAPI.Controllers
     public class PedidosController : Controller
     {
         [HttpPost("confirmar")]
-        public ConfirmarPedidoResponse ConfirmarPedido([FromBody]CarrinhoModel carrinho)
+        public async Task<ConfirmarPedidoResponse> ConfirmarPedido([FromBody]CarrinhoModel carrinho)
         {
             ConfirmarPedidoResponse result = new ConfirmarPedidoResponse();
             PedidoModel pedido = new PedidoModel();
-            
-            // Adiciona itens do carrinho no pedido
-            pedido.AddRangeItemPedido(carrinho.Itens);
 
-            pedido.DataPedido = DateTime.Now;
-            pedido.Status = StatusPedido.Confirmado;
+            // Ao confirmar um pedido o usuario deve ser autenticado
+            pedido.Usuario = await AutenticacaoService.AutenticarV2("keppel@iec.com.br", "123456");
 
-            result.StatusCode = 200;
-            result.Pedido = pedido;
+            if (pedido.Usuario != null)
+            {
+                // Adiciona itens do carrinho no pedido
+                pedido.AddRangeItemPedido(carrinho.Itens);
 
+                pedido.DataPedido = DateTime.Now;
+                pedido.Status = StatusPedido.Confirmado;
+
+                result.StatusCode = 200;
+                result.Pedido = pedido;
+            }
+            else
+            {
+                result.StatusCode = 204;
+            }
             return result;
         }
 

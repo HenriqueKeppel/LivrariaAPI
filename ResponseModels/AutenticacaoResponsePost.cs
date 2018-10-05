@@ -6,5 +6,7 @@ namespace LivrariaAPI.ResponseModels
     {
         public string Token {get;set;}
         public DateTime DataCriacao {get;set;}
+        public string Login {get;set;}
+        public int IdUsuario {get;set;}
     }
 }

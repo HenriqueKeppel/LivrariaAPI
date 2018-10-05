@@ -12,7 +12,9 @@ namespace LivrariaAPI.Models
         public List<PedidoItem> ItensPedido {get; set;}
         public StatusPedido Status {get;set;}
         public DateTime DataPedido  {get;set;}
-
+        public UsuarioModel Usuario{get;set;}
+        public CartaoCreditoModel CartaoCredito {get;set;}
+        
         public PedidoModel()
         {
             // TODO: gerar numero de pedido

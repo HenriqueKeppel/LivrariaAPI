@@ -17,9 +17,6 @@ namespace LivrariaAPI.Controllers
         [ProducesResponseType(200)]
         public async Task<LivrosGet> Get([FromQuery]int limit, int offset, string titulo, int idEditora, DateTime anoLancamento)
         {
-            // Loga que iniciou o processo de get
-            await LoggerService.RegistrarLog("Get: LivrariaAPI/v1/Livros");
-
             LivrosGet result = new LivrosGet(limit, offset);
 
             AutorModel autorMock = new AutorModel()
