@@ -9,6 +9,7 @@ namespace LivrariaAPI.Models
     {
         public int NumeroPedido {get; set;}
         public Decimal ValorTotal {get; set;}
+        public int QtdParcelas {get;set;}
         public List<PedidoItem> ItensPedido {get; set;}
         public StatusPedido Status {get;set;}
         public DateTime DataPedido  {get;set;}

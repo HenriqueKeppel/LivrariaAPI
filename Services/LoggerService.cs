@@ -10,22 +10,22 @@ namespace LivrariaAPI.Services
 {
     public static class LoggerService
     {
-        public static async Task<bool> RegistrarLogTransacao(LoggerPagamentoRequestModel logger)
+        private const string urlBase = "http://localhost:5001/LoggerApi/v1/Logger";
+        public static async Task<bool> RegistrarLogTransacao(LoggerPagamentoRequestPost request)
         {
-            string url = "http://localhost:5001/LoggerApi/v1/Logger";        
-            var uri = new Uri(url);
-            HttpClient cliente = new HttpClient();
+            bool retorno = false;
+            var uri = new Uri(string.Format("{0}/Pagamento", urlBase));
 
-            var data = JsonConvert.SerializeObject(logger);
-            var content = new StringContent(data, Encoding.UTF8, "application/json");
+            using (var cliente = new HttpClient())
+            {
+                var data = JsonConvert.SerializeObject(request);
+                var content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            //HttpResponseMessage response = cliente.PostAsync(uri, content);
-            HttpResponseMessage response = await cliente.PostAsync(uri, content);
+                HttpResponseMessage response = await cliente.PostAsync(uri, content);
 
-            if (response.IsSuccessStatusCode)
-                return true;
-            else
-                return false;
+                retorno = response.IsSuccessStatusCode;
+            }
+            return retorno;
         }
     }
 }

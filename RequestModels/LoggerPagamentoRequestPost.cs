@@ -3,10 +3,12 @@ using System;
 
 namespace LivrariaAPI.RequestModels
 {
-    public class LoggerPagamentoRequestModel
+    public class LoggerPagamentoRequestPost
     {
-        CartaoCreditoModel Cartao {get;set;}
-        UsuarioModel Usuario {get;set;}
         public int NumeroPedido {get;set;}
+        public DateTime DataPagamento {get;set;}
+        public int IdUsuario {get;set;}
+        public decimal ValorPedido {get;set;}
+        public int QtdParcelas {get;set;}
     }
 }

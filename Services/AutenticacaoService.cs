@@ -11,7 +11,7 @@ namespace LivrariaAPI.Services
 {
     public static class AutenticacaoService
     {
-        private const string urlBase = "http://localhost:5002/AutenticacaoApi/v1/";
+        private const string urlBase = "http://localhost:5002/AutenticacaoApi/v1";
 
         public static async Task<UsuarioModel> Autenticar(string email, string pass)
         {
@@ -23,7 +23,7 @@ namespace LivrariaAPI.Services
                 AutenticacaoRequestPost request = new AutenticacaoRequestPost
                 {
                     Email = email,
-                    Pass = pass
+                    Password = pass
                 };
 
                 var data = JsonConvert.SerializeObject(request);
@@ -34,14 +34,17 @@ namespace LivrariaAPI.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
-                    string retorno = JsonConvert.DeserializeObject<string>(responseString);
+                    AutenticacaoResponsePost retorno = JsonConvert.DeserializeObject<AutenticacaoResponsePost>(responseString);
 
-                    usuarioAutenticado = new UsuarioModel
+                    if (retorno.IsValid == 1)
                     {
-                        IdUsuario = 1,
-                        Login = email,
-                        Token = retorno
-                    };
+                        usuarioAutenticado = new UsuarioModel
+                        {
+                            IdUsuario = 1,
+                            Login = email,
+                            Token = retorno.Autenticacao.Token
+                        };
+                    }
                 }
             }
             return usuarioAutenticado;

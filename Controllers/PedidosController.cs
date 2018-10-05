@@ -20,7 +20,7 @@ namespace LivrariaAPI.Controllers
             PedidoModel pedido = new PedidoModel();
 
             // Ao confirmar um pedido o usuario deve ser autenticado
-            pedido.Usuario = await AutenticacaoService.Autenticar("keppel@exemple.com", "123456");
+            pedido.Usuario = await AutenticacaoService.Autenticar("keppel@iec.com.br", "123456");
 
             if (pedido.Usuario != null)
             {

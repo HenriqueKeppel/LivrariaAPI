@@ -1,11 +1,11 @@
 using System;
+using LivrariaAPI.Models;
 
 namespace LivrariaAPI.ResponseModels
 {
     public class AutenticacaoResponsePost
     {
-        public string Token {get;set;}
-        public string Login {get;set;}
-        public int IdUsuario {get;set;}
+        public AutenticacaoModel Autenticacao {get;set;}
+        public int IsValid {get;set;}
     }
 }
